@@ -4,7 +4,7 @@ import json
 from typing import Dict, Any, Optional
 import yaml
 from pathlib import Path
-from models import AppConfig
+from config.config import AppConfig
 
 class Settings:
     """Settings management with multiple configuration sources"""

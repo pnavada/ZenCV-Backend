@@ -1,5 +1,6 @@
 # main.py
-from fastapi import FastAPI, UploadFile, File, Body, HTTPException, Depends, BackgroundTask
+from fastapi import FastAPI, UploadFile, File, Body, HTTPException, Depends, Form
+from starlette.background import BackgroundTask
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from models.model_factory import ModelFactory
@@ -32,7 +33,8 @@ class CustomizeRequest(BaseModel):
 @app.post("/api/customize-resume")
 async def customize_resume(
     resume_file: UploadFile = File(...),
-    data: Dict = Body(...),
+    job_description: str = Form(...),
+    model_name: str = Form(None),
     config: AppConfig = Depends(get_settings)
 ) -> FileResponse:
     """
@@ -49,12 +51,20 @@ async def customize_resume(
     Raises:
         HTTPException: For various error conditions
     """
+
+    data = {
+        "job_description": job_description,
+        "model_name": model_name
+    }
+        
     # Validate request data
     if 'job_description' not in data:
         raise HTTPException(
             status_code=400,
             detail="job_description is required in request body"
         )
+
+    print(data)
 
     # Create temporary file for output
     temp_file = tempfile.NamedTemporaryFile(

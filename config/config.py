@@ -44,8 +44,8 @@ class ModelsConfig(BaseModel):
         default="google",
         description="Default model to use"
     )
-    google: Optional[GoogleModelConfig] = GoogleModelConfig()
-    bedrock: Optional[BedrockModelConfig] = BedrockModelConfig()
+    google: Optional[GoogleModelConfig] = None
+    bedrock: Optional[BedrockModelConfig] = None
 
 class AppConfig(BaseModel):
     """Main application configuration"""
