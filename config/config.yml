@@ -1,0 +1,16 @@
+app_name: "Resume Customization API"
+debug: false
+
+file_processor:
+  max_file_size: 5242880  # 5MB
+  supported_formats:
+    - ".pdf"
+  temp_dir: "temp"
+
+models:
+  default_model: "google"
+  google:
+    model_name: "gemini-1.5-flash"
+  bedrock:
+    region: "us-west-2"
+    model_id: "anthropic.claude-v2"
