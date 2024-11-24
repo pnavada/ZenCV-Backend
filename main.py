@@ -5,9 +5,11 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from models.model_factory import ModelFactory
 from utils.file_handler import FileHandler
+from utils.document_handler import DocumentHandler
 from config.settings import get_settings, AppConfig
 import tempfile
 import os
+import json
 from typing import Dict
 from pydantic import BaseModel
 
@@ -96,8 +98,20 @@ async def customize_resume(
                 detail=result.error
             )
 
-        # Write result to temporary file
-        temp_file.write(result.customized_resume)
+         # Parse the AI response into structured content
+        try:
+            content = json.loads(result.customized_resume)
+        except json.JSONDecodeError:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to parse AI response as JSON"
+            )
+
+        # Create DOCX document
+        doc = DocumentHandler.create_docx(content)
+        
+        # Save document to temporary file
+        doc.save(temp_file.name)
         temp_file.close()  # Close file to ensure all content is written
         
         # Create background task to cleanup temp file
@@ -106,8 +120,8 @@ async def customize_resume(
         # Return file response
         return FileResponse(
             path=temp_file.name,
-            filename="customized_resume.txt",
-            media_type="text/plain",
+            filename="customized_resume.docx",
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             background=cleanup_task
         )
         

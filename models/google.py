@@ -9,15 +9,15 @@ class GoogleModel(AIModelBase):
         self.model_name = model_name
 
     async def customize_resume(self, resume_text: str, job_description: str) -> ModelResponse:
-        prompt = self._create_prompt(resume_text, job_description).format(resume_text=resume_text, job_description=job_description)
+        prompt = self._create_prompt(resume_text, job_description)
         
         try:
             response = await asyncio.to_thread(
                 self.client.generate_content,
                 prompt)
-            
+
             return ModelResponse(
-                customized_resume=response.text
+                customized_resume=response.text[8:-5]
             )
             
         except Exception as e:
